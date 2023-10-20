@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <link rel="stylesheet" href="/styles/content.css">
+</head>
+<body>
+
+    
+        <div class="todo-app">
+            <% if (locals.name && name != "Today"){ %>
+                <h1><%= name %> <img src="/images/todolist_icon.png" alt="todo list"></h1>
+            <% } else { %>
+                <h1><%= date %> <img src="/images/todolist_icon.png" alt="todo list"></h1>
+             <% } %>
+             
+                
+                    <form class="row" style="margin-bottom: 2rem;" method="post">  
+                        <input type="text" placeholder="Next Todo" name="todo" autofocus autocomplete="off">
+                        <div class="keep-toghetter">
+                            <button formaction="/add" type="submit" name="addButton" value="<%= name %>" >Add</button>
+                            <button class="button-right" id="clearButton" name="clear" value="<%= name %>" formaction="/clear" type="submit">Cleanup</button>
+                        </div>
+
+                    </form>
+
+            <% if (locals.content) { %>
+            
+                <% for (let i = 0; i < content.length; i++) { %>
+
+                    <form class="row"  action="/check" method="post" id="<%= content[i]._id %>_form">
+                        <% if (content[i].checkboxValue == true) { %>
+                        <div class="checkbox-and-label" id="<%= content[i]._id %>_div" onclick="tab(this)">
+                            <input type="checkbox" name="mrCheck" id="<%= content[i]._id %>" onclick="check(this)" checked>
+                            <label  for="<%= content[i]._id %>" class="isDone" id="<%= content[i]._id %>_"> <%= content[i].text %></label>
+                        </div> 
+                        <% } else { %>
+                        <div class="checkbox-and-label" id="<%= content[i]._id %>_div" onclick="tab(this)">   
+                            <input type="checkbox" name="mrCheck" id="<%= content[i]._id %>" onclick="check(this)">
+                            <label for="<%= content[i]._id %>" id="<%= content[i]._id %>_"> <%= content[i].text %></label>
+                        </div>    
+                        <% } %>
+                        <button type="submit" name="mrDelete" value="<%= content[i]._id %>">Delete</button>
+                        <input type="hidden"  name="checkFormular" value="<%= content[i]._id %>">
+                        <input type="hidden" name="name" value="<%= name %>">
+                        
+                    </form>  
+
+                <% } %>
+              
+            <% } %>
+        </div><!--todo app-->
+
+    <script>
+
+        function check(myCheckbox){
+
+            const labelID = myCheckbox.id + "_";
+            const label = document.getElementById(labelID);
+
+            const formID = labelID + "form";
+            const form = document.getElementById(formID);            
+
+            if (myCheckbox.checked){
+                myCheckbox.value = "on";
+                label.style.textDecoration = 'line-through';
+                form.submit();
+            } else {
+                myCheckbox.value = "off";
+                label.style.textDecoration = 'none';
+                form.submit();
+            } 
+        }
+
+        function tab(div){
+            checkbox_id = div.id.replace("_div", "");
+            console.log(checkbox_id);
+            myCheckbox = document.getElementById(checkbox_id);
+            myCheckbox.checked = !myCheckbox.checked;
+            check(myCheckbox);
+        }
+
+    </script>
+</body>
+
+</html>
